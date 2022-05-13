@@ -1,0 +1,25 @@
+(function (modules) {
+  function require(id) {
+    let module = { exports: {} };
+    const [fn,mapping] = modules[id];
+
+    function localRequire(filename){
+      const id = mapping[filename]
+      return require(id)
+    }
+
+    fn(localRequire, module, module.exports);
+
+    return module.exports;
+  }
+
+  require(0)
+})({
+  <% Object.keys(modules).forEach((key)=>{ %> 
+  <%= key %> : [function (require, module, exports) {
+    <%- modules[key][0] %> 
+  }, 
+    <%- JSON.stringify(modules[key][1]) %> 
+  ],
+  <% }) %> 
+});
